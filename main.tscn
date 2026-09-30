@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://ddw7gqmoyhp0d"]
+[gd_scene load_steps=12 format=3 uid="uid://ddw7gqmoyhp0d"]
 
 [ext_resource type="Script" path="res://src/bhop_player.gd" id="1_player"]
 [ext_resource type="Script" path="res://src/hud.gd" id="2_hud"]
 [ext_resource type="Script" path="res://src/test_floor.gd" id="3_floor"]
+[ext_resource type="Script" path="res://src/settings_menu.gd" id="4_settings"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Sky_mat"]
 sky_top_color = Color(0.29, 0.47, 0.73, 1)
@@ -94,6 +95,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5756, 0)
 fov = 103.0
 
 [node name="Hud" type="CanvasLayer" parent="."]
+
+[node name="SettingsMenu" type="CanvasLayer" parent="."]
+script = ExtResource("4_settings")
 
 [node name="Label" type="Label" parent="Hud"]
 offset_left = 14.0

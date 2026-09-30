@@ -18,7 +18,11 @@ const MOVEMENT := preload("res://src/cs_movement.gd")
 @export var left_key: Key = KEY_A
 @export var right_key: Key = KEY_D
 @export var jump_key: Key = KEY_SPACE
-@export_range(0.05, 10.0) var mouse_sensitivity := 1.2
+@export_range(0.01, 10.0, 0.01) var mouse_sensitivity := 1.0
+@export_range(0.001, 0.1, 0.001) var m_yaw := 0.022
+@export_range(0.001, 0.1, 0.001) var m_pitch := 0.022
+var jump_mode := "auto"
+var _scroll_jump := false
 
 @export_group("Bhop")
 ## When on, holding jump re-jumps on every landing (CS:GO sv_autobunnyhopping).
@@ -86,7 +90,9 @@ func _ready() -> void:
 
 	position = movement.origin
 	rotation = Vector3(0.0, spawn_yaw, 0.0)
+	$Camera3D.rotation.x = 0.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	Input.use_accumulated_input = false
 
 
 func respawn() -> void:
@@ -95,21 +101,29 @@ func respawn() -> void:
 	view_angles = Vector2(spawn_yaw, 0.0)
 	position = movement.origin
 	rotation = Vector3(0.0, spawn_yaw, 0.0)
+	$Camera3D.rotation.x = 0.0
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			view_angles.x -= event.relative.x * mouse_sensitivity * 0.001
-			view_angles.y = clampf(view_angles.y - event.relative.y * mouse_sensitivity * 0.001,
+			view_angles.x -= deg_to_rad(event.relative.x * mouse_sensitivity * m_yaw)
+			view_angles.y = clampf(view_angles.y - deg_to_rad(event.relative.y * mouse_sensitivity * m_pitch),
 				-PI * 0.49, PI * 0.49)
 			rotation = Vector3(0.0, view_angles.x, 0.0)
+			$Camera3D.rotation.x = view_angles.y
 		return
+	if event is InputEventMouseButton and event.pressed and jump_mode == "scroll":
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_scroll_jump = true
+			return
 
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			KEY_ESCAPE:
-				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+				var menu = get_tree().get_first_node_in_group(&"settings_menu")
+				if menu != null:
+					menu.toggle()
 			toggle_autohop_key:
 				autobunnyhopping = not autobunnyhopping
 				movement.autobunnyhopping = autobunnyhopping
@@ -128,6 +142,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _sample_buttons() -> int:
 	var b := 0
+	var settings_menu = get_tree().get_first_node_in_group(&"settings_menu")
+	if settings_menu != null and settings_menu.panel.visible:
+		_scroll_jump = false
+		return 0
 	if Input.is_physical_key_pressed(forward_key):
 		b |= MOVEMENT.IN_FORWARD
 	if Input.is_physical_key_pressed(back_key):
@@ -136,8 +154,11 @@ func _sample_buttons() -> int:
 		b |= MOVEMENT.IN_MOVERIGHT
 	if Input.is_physical_key_pressed(left_key):
 		b |= MOVEMENT.IN_MOVELEFT
-	if Input.is_physical_key_pressed(jump_key):
+	if jump_mode == "auto" and Input.is_physical_key_pressed(jump_key):
 		b |= MOVEMENT.IN_JUMP
+	if _scroll_jump:
+		b |= MOVEMENT.IN_JUMP
+		_scroll_jump = false
 	return b
 
 
