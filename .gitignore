@@ -1,0 +1,69 @@
+# ---------------------------------------------------------------------------
+# Godot 4 build artifacts
+# ---------------------------------------------------------------------------
+# Import cache, UID cache, editor layout, shader cache. Entirely regenerated on
+# first open, and full of absolute paths from whichever machine created it.
+# This is the one entry Godot's own template includes; without it the repo
+# fills with noise on every launch.
+.godot/
+
+# ---------------------------------------------------------------------------
+# Reference material — not ours, not redistributable
+# ---------------------------------------------------------------------------
+# Learning documents used to derive the movement model. They are inputs, not
+# part of the project. PLAN.md section 3 records what each one is and section
+# 13 records where to get them, so ignoring the binaries loses no information
+# and keeps ~1.2 MB of third-party content out of history forever.
+*.pdf
+
+# ---------------------------------------------------------------------------
+# Export / build output
+# ---------------------------------------------------------------------------
+# Regenerate with File > Export. Keep the export_presets.cfg itself tracked.
+/build/
+/export/
+/demo/
+*.pck
+*.apk
+*.aab
+*.exe
+*.dmg
+*.app/
+*.zip
+*.7z
+*.tar.gz
+
+# Only relevant if this is ever ported to C#. Harmless otherwise.
+.mono/
+mono_crash.*.json
+data_*/
+*.csproj.old
+
+# ---------------------------------------------------------------------------
+# Editor and OS cruft
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.swp
+*.swo
+*~
+godot.log
+*.log
+
+# Personal editor configuration. Share the project, not your keybindings.
+.vscode/
+.idea/
+*.code-workspace
+
+# ---------------------------------------------------------------------------
+# Deliberately NOT ignored — do not add these
+# ---------------------------------------------------------------------------
+# *.gd / *.tscn / *.tres / *.gdshader   the project itself
+# *.uid                               stable resource UIDs, introduced in
+#                                     Godot 4.4; Godot expects these to be
+#                                     committed so references survive renames
+# *.import                            per-asset import settings (icon.svg.import)
+# export_presets.cfg                  export configuration
+# .gitattributes, project.godot       project configuration

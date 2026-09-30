@@ -1,0 +1,108 @@
+[gd_scene load_steps=11 format=3 uid="uid://ddw7gqmoyhp0d"]
+
+[ext_resource type="Script" path="res://src/bhop_player.gd" id="1_player"]
+[ext_resource type="Script" path="res://src/hud.gd" id="2_hud"]
+[ext_resource type="Script" path="res://src/test_floor.gd" id="3_floor"]
+
+[sub_resource type="ProceduralSkyMaterial" id="Sky_mat"]
+sky_top_color = Color(0.29, 0.47, 0.73, 1)
+sky_horizon_color = Color(0.62, 0.71, 0.78, 1)
+ground_bottom_color = Color(0.13, 0.14, 0.16, 1)
+ground_horizon_color = Color(0.5, 0.55, 0.6, 1)
+sun_angle_max = 25.0
+
+[sub_resource type="Sky" id="Sky_res"]
+sky_material = SubResource("Sky_mat")
+
+[sub_resource type="Environment" id="Env_res"]
+background_mode = 2
+sky = SubResource("Sky_res")
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.78, 0.88, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 2
+ssao_enabled = true
+
+[sub_resource type="PlaneMesh" id="Plane_floor"]
+size = Vector2(300, 300)
+
+[sub_resource type="BoxShape3D" id="Shape_floor"]
+size = Vector3(300, 1, 300)
+
+[sub_resource type="BoxMesh" id="Box_marker"]
+size = Vector3(0.4, 2, 0.4)
+
+[sub_resource type="BoxShape3D" id="Shape_marker"]
+size = Vector3(0.4, 2, 0.4)
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_res")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, -0.866025, 0, 0.866025, 0.5, 0, 40, 0)
+light_energy = 1.1
+shadow_enabled = true
+directional_shadow_max_distance = 120.0
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="Visual" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("Plane_floor")
+script = ExtResource("3_floor")
+
+[node name="Shape" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("Shape_floor")
+
+[node name="Markers" type="Node3D" parent="."]
+
+[node name="Marker0" type="StaticBody3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -25)
+
+[node name="Mesh" type="MeshInstance3D" parent="Markers/Marker0"]
+mesh = SubResource("Box_marker")
+
+[node name="Shape" type="CollisionShape3D" parent="Markers/Marker0"]
+shape = SubResource("Shape_marker")
+
+[node name="Marker1" type="StaticBody3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -50)
+
+[node name="Mesh" type="MeshInstance3D" parent="Markers/Marker1"]
+mesh = SubResource("Box_marker")
+
+[node name="Shape" type="CollisionShape3D" parent="Markers/Marker1"]
+shape = SubResource("Shape_marker")
+
+[node name="Marker2" type="StaticBody3D" parent="Markers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -75)
+
+[node name="Mesh" type="MeshInstance3D" parent="Markers/Marker2"]
+mesh = SubResource("Box_marker")
+
+[node name="Shape" type="CollisionShape3D" parent="Markers/Marker2"]
+shape = SubResource("Shape_marker")
+
+[node name="Player" type="Node3D" parent="." groups=["player"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+script = ExtResource("1_player")
+
+[node name="Camera3D" type="Camera3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5756, 0)
+fov = 103.0
+
+[node name="Hud" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="Hud"]
+offset_left = 14.0
+offset_top = 10.0
+offset_right = 760.0
+offset_bottom = 300.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 15
+text = "loading"
+script = ExtResource("2_hud")
